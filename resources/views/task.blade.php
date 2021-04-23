@@ -98,6 +98,9 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <select id="courier" name="courier" class="form-control">
+                                            @foreach ($courier_list as $courier)
+                                                <option value="{{ $courier->id }}"> {{ $courier->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
