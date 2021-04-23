@@ -87,8 +87,9 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <select id="payment_type" name="payment_type" class="form-control">
-                                            <option value="cash">Cash</option>
-                                            <option value="cod">COD</option>
+                                            @foreach ($payment_types as $payment)
+                                                <option value="{{ $payment->id }}"> {{ $payment->type }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
