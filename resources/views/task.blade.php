@@ -77,6 +77,9 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <select id="sales_name" name="sales_name" class="form-control">
+                                            @foreach ($salesmans as $sales)
+                                                <option value="{{ $sales->id }}"> {{ $sales->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="col-sm-2">

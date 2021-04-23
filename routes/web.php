@@ -13,6 +13,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('task');
-});
+Route::get('/', 'App\Http\Controllers\TaskController@index');
