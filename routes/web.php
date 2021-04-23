@@ -14,3 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'App\Http\Controllers\TaskController@index');
+Route::post('/invoice', 'App\Http\Controllers\TaskController@invoice');
+Route::post('/find', 'App\Http\Controllers\TaskController@find');
+Route::get('/{id}', 'App\Http\Controllers\TaskController@load');

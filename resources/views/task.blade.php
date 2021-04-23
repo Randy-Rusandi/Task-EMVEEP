@@ -34,18 +34,33 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body">
-                    @if (session('status'))
+                    @if (session()->has('success'))
                         <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
+                        @if (is_array(session('success')))
+                            <ul>
+                                @foreach (session('success') as $message)
+                                    <li>{{ $message }}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            {{ session('success') }}
+                        @endif
                         </div>
                     @endif
-                    <form action="/invoice_parent" method="POST">
+                    @if ($errors->any())
+                        <div class="alert alert-danger" role="alert">
+                            {{$errors->first()}}
+                        </div>
+                    @endif
+                    <form action="/find" method="POST">
+                        @csrf
                         <label for="no_invoice">No Invoice</label>
-                        <input type="text" id="no_invoice" name="no_invoice">
+                        <input type="text" id="no_invoice" name="no_invoice" value="{{ $invoice->id ?? '' }}">
                         <button class="btn btn-primary" type="submit">View</button>
                     </form>
                     <br />
                     <form action="/invoice" method="POST">
+                        @csrf
                         <div class="card">
                             <div class="card-header">Invoice Detail</div>
                             <div class="card-body">
@@ -54,7 +69,7 @@
                                         <label for="invoice_date">Invoice Date</label>
                                     </div>
                                     <div class="col-sm-2">
-                                        <input type="text" id="invoice_date" name="invoice_date" class="form-control datepicker" placeholder="Select Date">
+                                        <input type="text" id="invoice_date" name="invoice_date" class="form-control datepicker" value="{{ ($invoice ?? '')? $invoice->invoice_date->format('d/m/Y') : ''}}">
                                     </div>
                                 </div>
                                 <div class="row form-group">
@@ -62,13 +77,13 @@
                                         <label for="customer">To</label>
                                     </div>
                                     <div class="col-sm-4">
-                                        <textarea type="text" id="customer" name="customer" class="form-control"></textarea>
+                                        <textarea type="text" id="customer" name="customer" class="form-control">{{ $invoice->customer ?? '' }}</textarea>
                                     </div>
                                     <div class="col-sm-2">
                                         <label for="shipment">Ship To</label>
                                     </div>
                                     <div class="col-sm-4">
-                                        <textarea type="text" id="shipment" name="shipment" class="form-control"></textarea>
+                                        <textarea type="text" id="shipment" name="shipment" class="form-control">{{ $invoice->shipment ?? '' }}</textarea>
                                     </div>
                                 </div>
                                 <div class="row form-group">
@@ -76,9 +91,9 @@
                                         <label for="sales_name">Sales Name</label>
                                     </div>
                                     <div class="col-sm-4">
-                                        <select id="sales_name" name="sales_name" class="form-control">
+                                        <select id="sales_id" name="sales_id" class="form-control">
                                             @foreach ($salesmans as $sales)
-                                                <option value="{{ $sales->id }}"> {{ $sales->name }}</option>
+                                                <option value="{{ $sales->id }}" {{ ($invoice ?? '')?  ($invoice->sales_id==$sales->id)? 'selected' : '' : '' }}> {{ $sales->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -86,9 +101,9 @@
                                         <label for="payment_type">Payment Type</label>
                                     </div>
                                     <div class="col-sm-4">
-                                        <select id="payment_type" name="payment_type" class="form-control">
+                                        <select id="payment_type_id" name="payment_type_id" class="form-control">
                                             @foreach ($payment_types as $payment)
-                                                <option value="{{ $payment->id }}"> {{ $payment->type }}</option>
+                                                <option value="{{ $payment->id }}"  {{ ($invoice ?? '')?  ($invoice->payment_type_id==$payment->id)? 'selected' : '' : '' }}> {{ $payment->type }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -98,9 +113,9 @@
                                         <label for="courier">Courier</label>
                                     </div>
                                     <div class="col-sm-4">
-                                        <select id="courier" name="courier" class="form-control">
+                                        <select id="courier_id" name="courier_id" class="form-control">
                                             @foreach ($courier_list as $courier)
-                                                <option value="{{ $courier->id }}"> {{ $courier->name }}</option>
+                                                <option value="{{ $courier->id }}" {{ ($invoice ?? '')?  ($invoice->courier_id==$courier->id)? 'selected' : '' : '' }}> {{ $courier->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -127,7 +142,7 @@
                                               <td><input type="text" id="weight{{ $i }}" name="weight{{ $i }}" class="form-control"></td>
                                               <td><input type="text" id="qty{{ $i }}" name="qty{{ $i }}" class="form-control"></td>
                                               <td><input type="text" id="price{{ $i }}" name="price{{ $i }}" class="form-control"></td>
-                                              <td><input type="text" id="total{{ $i }}" class="form-control total_item" name="total{{ $i }}" class="form-control"></td>
+                                              <td><input type="text" id="total{{ $i }}" name="total{{ $i }}" class="form-control total_item" ></td>
                                           </tr>
                                          @endfor
                                    </tbody>
@@ -174,6 +189,7 @@
                        </div>
                        <div class="row">
                            <div class="col-sm-7">
+                               <input type="hidden" id="invoice_id" name="invoice_id" value="{{ $invoice->id ?? '' }}">
                                <button class="btn btn-primary" type="submit">SAVE</button>
                            </div>
                        </div>
